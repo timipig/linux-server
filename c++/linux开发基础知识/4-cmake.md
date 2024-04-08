@@ -957,6 +957,21 @@ add_definitions(-DDEBUG)
 add_executable(app ./test.c)
 ```
 
+### CMake编译release或者Debug
+
+1、通过命令行的方式
+
+     cmake  -DCMAKE_BUILD_TYPE=Debug ..
+2、编写cmakeLists.txt文件
+
+```cmake
+ set(CMAKE_BUILD_TYPE Debug CACHE STRING "set build type to debug")
+ 或者
+
+ set(CMAKE_BUILD_TYPE "Debug")
+```
+
+
 ### CMake中的预定义宏
 
 下面的列表中为大家整理了一些CMake中常用的宏：

@@ -1,5 +1,79 @@
 # git
 
+## git快速了解
+
+### 1.git的四个区域
+
+![image-20240409001838007](../../picture/image-20240409001838007.png)
+
+**Workspace**： 工作区，就是你平时存放项目代码的地方
+
+**Index / Stage**： 暂存区，用于临时存放你的改动，事实上它只是一个文件，保存即将提交到文件列表信息
+
+**Repository**： 仓库区（或版本库），就是安全存放数据的位置，这里面有你提交到所有版本的数据。其中HEAD指向最新放入仓库的版本
+
+**Remote**： 远程仓库，托管代码的服务器，可以简单的认为是你项目组中的一台电脑用于远程数据交换
+
+
+
+> **这里有一个地方值得注意就是从Remote中拉取代码有两种方式**
+>
+> **一种是fecth 一种是pull**
+>
+> **git pull相当于直接把代码拉取到工作区然后修改工作区的文件**
+>
+> **git fetch则是把远程仓库的修改先拉取到本地仓库 的origin(远程仓库在本地的分支，由git维护)**
+>
+> 将远程仓库包含分支的最新commit-id到本地文件
+>
+> 然后再git merge把修改的内容拷贝到工作区
+>
+>  
+>
+> 参考目录  我的git中的深入理解git命令
+
+### 2.git 文件的四种状态
+
+![image-20240409002157967](../../picture/image-20240409002157967.png)
+
+
+
+Untracked:   未跟踪, 此文件在文件夹中，但并没有加入到git库，不参与版本控制， 通过git add 状态变为Staged。
+
+
+
+Unmodify:   文件已经入库且未修改, 即版本库中的文件快照内容与文件夹中完全一致，这种类型的文件有两种去处，如果它被修改， 而变为Modified，如果使用git rm移出版本库, 则成为Untracked文件。
+
+
+
+Modified：文件已修改，仅仅是修改，并没有进行其他的操作，这个文件也有两个去处，通过git add可进入暂存
+
+
+
+staged状态，使用git checkout 则丢弃修改，返回到unmodify状态, 这个git checkout即从库中取出文件，覆盖当前修改
+
+
+
+Staged：暂存状态，执行git commit则将修改同步到库中，这时库中的文件和本地文件又变为一致，文件为Unmodify状态。
+
+### 3.git的工作流程
+
+git的工作流程一般是这样的：
+
+1、在工作目录中添加、修改文件；
+
+2、将需要进行版本管理的文件add到暂存区域；
+
+3、将暂存区域的文件commit到git仓库；
+
+4、本地的修改push到远程仓库，如果失败则执行第5步
+
+5、git pull将远程仓库的修改拉取到本地，如果有冲突需要修改冲突。回到第三步
+
+因此，git管理的文件有三种状态：已修改（modified）,已暂存（staged）,已提交(committed)
+
+
+
 ## 初始化
 
 什么是版本库呢？版本库又名仓库，英文名**repository**，你可以简单理解成一个目录，这个目录里面的所有文件都可以被Git管理起来，每个文件的修改、删除，Git都能跟踪，以便任何时刻都可以追踪历史，或者在将来某个时刻可以“还原”。
@@ -27,7 +101,7 @@
 
 初始化成功后当前目录下多了一个`.git`的目录，这个目录是Git来跟踪管理版本库的，没事千万不要手动修改这个目录里面的文件，不然改乱了，就把Git仓库给破坏了。
 
-**（如果你是通过clon下来的代码库，那么你不需要再使用git init了）**
+**（如果你是通过clon下来的代码库，那么你不需要再使用git init了，但是为了提交代码到远程你还是需要设置自己的用户名）**
 
 ## git的使用
 
@@ -62,7 +136,7 @@
    >
    > ```
    > $ git add file1.txt
-   > $ git add file2.txt file3.txt
+   > $ git add file2.txt file 3.txt
    > $ git commit -m "add 3 files."
    > ```
 
@@ -278,12 +352,12 @@ Git的版本库里存了很多东西，其中最重要的就是称为stage（或
 >
 >  
 >
->  
->
-> 如果你git add到了暂存区，可以通过下面的命令将暂存区的修改撤销掉，重新放回工作区，这个不是将修改撤销，而是将修改从暂存区中放回到工作区，如果工作区也不需要这个修改，就通过最上面的命令撤销
+>  如果你git add到了暂存区，可以通过下面的命令将暂存区的修改撤销掉，重新放回工作区，这个不是将修改撤销，而是将修改从暂存区中放回到工作区，如果工作区也不需要这个修改，就通过最上面的命令撤销
 >
 > ```
-> git reset HEAD readme.txt
+>git reset HEAD readme.txt
+> 或者
+> git restore --staged  文件名
 > ```
 >
 >  
@@ -296,9 +370,9 @@ Git的版本库里存了很多东西，其中最重要的就是称为stage（或
 
 ```
 情况1：文件只在工作区操作，未add。撤销操作：git restore <file>。结果：工作区文件回退。
-情况2：文件已add，未commit。撤销操作：git restore --staged <file>。结果：暂存区文件回退，工作区文件未回退，如需继续回退，操按情况1操作。
+情况2：文件已add，未commit。撤销操作：git restore --staged <file>。结果：暂存区文件回退，工作区文件未回退（也就是此时工作区的文件），如需继续回退，操按情况1操作。
 情况3：文件已add，已commit。撤销操作：git reset --hard commit_id。结果：工作区文件、暂存区文件、本地仓库都回退
-情况4：撤销暂存区的所有修改git restore --staged . 
+情况4：撤销暂存区的所有修改git restore --staged . （只是简单的从暂存区退出该文件，不会影响工作区）
 ```
 
 
@@ -409,6 +483,8 @@ $ ssh-keygen -t rsa -C "1919371336@qq.com"
 
 #### 2.添加远程库
 
+**如果你是直接clone的远程库，那么你已经和远程origin仓库相关联了，下面不是使用clone的方式**
+
 1. 先在github上新建一个空的仓库，GitHub告诉我们，可以从这个仓库克隆出新的仓库，也可以把一个已有的本地仓库与之关联，然后，把本地仓库的内容推送到GitHub仓库
 
 2. 将本地仓库与远程仓库关联
@@ -510,7 +586,9 @@ Host github.com
 
 注意事项2：
 
-远程仓库更改了分支的名字，再push修改报错![image-20240114142325474](../../picture/image-20240114142325474.png)
+远程仓库更改了分支的名字，再push修改报错
+
+![image-20240114142325474](../../picture/image-20240114142325474.png)
 
 解决办法：
 
@@ -674,7 +752,7 @@ git log origin/master
 >
 > `git merge`命令用于合并指定分支到当前分支。合并后，再查看`readme.txt`的内容，就可以看到，和`dev`分支的最新提交是完全一样的。
 >
-> 注意到上面的`Fast-forward`信息，Git告诉我们，这次合并是“快进模式”，也就是直接把`master`指向`dev`的当前提交，所以合并速度非常快。
+> 注意到上面的`Fast-forward`信息，Git告诉我们，这次合并是“快进模式”，也就是**直接**把`master`指向`dev`的当前提交，所以合并速度非常快。
 >
 > 当然，也不是每次合并都能`Fast-forward`，我们后面会讲其他方式的合并。
 >
@@ -688,13 +766,13 @@ git log origin/master
 
 <font color='red'>注意事项1：</font>
 
-如果你在其它分支修改了文件但是没有commit的话，在master分支也是能够看到修改并且你还可以在master分支上提交这个修改，哪怕修改是已经存放在暂存区。
+**如果你在其它分支修改了文件但是没有commit的话，在master分支也是能够看到修改并且你还可以在master分支上提交这个修改，哪怕修改是已经存放在暂存区。**
 
 
 
 <font color='red'>注意事项2：</font>
 
-切换分支的时候一定要保证当前分支的修改已经提交了，再切换。
+**切换分支的时候一定要保证当前分支的修改已经提交了，再切换。**
 
 #### 2.解决冲突
 
@@ -790,7 +868,7 @@ Merge made by the 'recursive' strategy.
 
 #### 4.存储工作区状态
 
-首先有一个原则，你要切换分支的时候要确保当前分支的工作区和暂存区是干净的，因为如果在当前分支的工作区不干净，切换到另外分支也可以继续修改，如你在dev分支创建一个a文件然后切换回master分支，你同样也会看到这个文件，但是这个文件按照道理是属于dev分支，所以如果我们要临时修改一个bug应该如何，但是我们的功能分支还有代码没有完成，不能提交应该如何做？
+**首先有一个原则，你要切换分支的时候要确保当前分支的工作区和暂存区是干净的，因为如果在当前分支的工作区不干净，切换到另外分支也可以继续修改**，如你在dev分支创建一个a文件然后切换回master分支，你同样也会看到这个文件，但是这个文件按照道理是属于dev分支，所以如果我们要临时修改一个bug应该如何，但是我们的功能分支还有代码没有完成，不能提交应该如何做？
 
 可以通过以下命令，把当前工作现场“储藏”起来，等以后恢复现场后继续工作：
 
@@ -799,11 +877,11 @@ $ git stash
 Saved working directory and index state WIP on dev: f52c633 add merge
 ```
 
-然后可以再需要修改bug的分支上，新建一个分支修改bug后再合并到当前分支
+然后可以再到需要修改bug的分支上，新建一个分支修改bug后再合并到当前分支
 
 <font color='red'>注意1：</font>
 
-git stash将工作区存放了起来，但是它对于每一个分支都是可见的，意思是如果你在master分支stash，在dev分支也可以使用git stash pop来获取暂存的工作区状态
+**git stash将工作区存放了起来，但是它对于每一个分支都是可见的，意思是如果你在master分支stash，在dev分支也可以使用git stash pop来获取暂存的工作区状态**
 
 
 
@@ -815,7 +893,7 @@ master分支有一个dev分支，从master分支上新建一个bug分支来修�
 git cherry-pick 4c805e2
 ```
 
-流程是bug合并到master上之后，再切换到dev分支上先git cherry-pick 4c805e2 再 git stash pop就可以了，但是不能先git stash pop 再合并修改bug的commit
+**流程是bug合并到master上之后，再切换到dev分支上先git cherry-pick 4c805e2 再 git stash pop就可以了，但是不能先git stash pop 再合并修改bug的commit**
 
 #### 5.抓取与推送远程分支
 
@@ -848,6 +926,9 @@ origin  git@github.com:michaelliao/learngit.git (push)
    >
    > ```
    > $ git push origin dev
+   > 
+   > //将本地的dev分支推送到远程上，远程默认会新建一个dev分支
+   > git push REMOTE-NAME LOCAL-BRANCH-NAME:REMOTE-BRANCH-NAME
    > ```
 
    
@@ -951,13 +1032,13 @@ origin  git@github.com:michaelliao/learngit.git (push)
 3. 如果合并有冲突，则解决冲突，并在本地提交；
 4. 没有冲突或者解决掉冲突后，再用`git push origin <branch-name>`推送就能成功！
 
-如果`git pull`提示`no tracking information`，则说明本地分支和远程分支的链接关系没有创建，用命令`git branch --set-upstream-to <branch-name> origin/<branch-name>`。
+如果`git pull`提示`no tracking information`，则说明本地分支和远程分支的链接关系没有创建，用命令`git branch --set-upstream-to =origin/<branch-name> <branch-name> `。
 
 这就是多人协作的工作模式，一旦熟悉了，就非常简单。
 
 
 
-注意：如果你是手动创建的dev分支，你想要将你的dev分支直接push到远程的origin/dev分支，这时候两个分支是没有关联的，哪怕没有错误，也是不能push的
+注意：如果你是手动创建的dev分支，你想要将你的dev分支直接push到远程的origin/dev分支，这时候两个分支是没有关联的，哪怕没有错误，也是不能push的，所以你需要先让他们关联起来
 
 #### 6.rebase的使用（建议不要使用）
 
@@ -977,7 +1058,7 @@ $ git log --graph --pretty=oneline --abbrev-commit
 ...
 ```
 
-
+看上去就非常的杂乱无章，
 
 这个时候，rebase就派上了用场。我们输入命令`git rebase`试试：
 
@@ -1271,7 +1352,7 @@ github上创建多分支，如何进行分支的合并
 
 ![image-20240115165829581](../../picture/image-20240115165829581.png)
 
-然后直接点击create pull request，然后就会进入下面这个界面
+然后直接点击create pull request，然后就会进入下面这个界面，如果没有冲突就会显示两个分支无冲突可以合并
 
 ![image-20240115164648335](../../picture/image-20240115164648335.png)
 
@@ -1303,7 +1384,7 @@ Git 有两个命令用来提取远程仓库的更新。
    >
    > 该命令执行完后需要执行 git merge 远程分支到你所在的分支。
    >
-   > 2、从远端仓库提取数据并尝试合并到当前分支：
+   > 2、从本地仓库的远程仓库备份提取数据并尝试合并到当前分支：
    >
    > ```
    > git merge
@@ -1707,3 +1788,9 @@ ssh -T git@github.com
 为什么我的阿里云不会报错？
 
 原因是阿里云是公有云，而虚拟机本质和我使用的是一张网卡，自然也受到梯子的限制
+
+## git的疑问
+
+### 问题1：
+
+commit的时候我直接
