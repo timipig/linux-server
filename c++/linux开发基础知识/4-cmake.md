@@ -310,7 +310,7 @@ add_executable(app  ${SRC_LIST})
 $ g++ *.cpp -std=c++11 -o app
 ```
 
-上面的例子中通过参数-std=c++11指定出要使用c++11标准编译程序，**C++标准在CMake中对应有一宏叫做<font color='red'>DCMAKE_CXX_STANDARD</font>**。在CMake中想要指定C++标准有两种方式：
+上面的例子中通过参数-std=c++11指定出要使用c++11标准编译程序，**C++标准在CMake中对应有一宏叫做<font color='red'>CMAKE_CXX_STANDARD</font>**。在CMake中想要指定C++标准有两种方式：
 
 1. **<font color='red'>在 CMakeLists.txt 中通过 set 命令指定</font>**
 

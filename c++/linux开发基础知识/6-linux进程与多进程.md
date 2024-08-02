@@ -1031,7 +1031,7 @@ int munmap(void *addr, size_t length);
 
    
 
-## 信号量（重点）
+## 信号（重点）
 
 ### 概述
 
@@ -1604,7 +1604,7 @@ int main()
 }
 ```
 
-### sigaction函数
+### sigaction函数（最新）
 
 ```c++
 #include <signal.h>

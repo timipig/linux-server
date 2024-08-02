@@ -54,7 +54,7 @@ cat desc.txt：查看desc.txt的内容
 
 more desc.txt：分页查看desc.txt的内容
 
-8、查看文件尾内容：tail
+8、**查看文件尾内容：tail**
 
 tail -100 desc.txt：查看desc.txt的最后100行内容
 
@@ -82,7 +82,7 @@ find /opt -name ‘*.txt’：在opt目录下查找以.txt结尾的文件
 
 ifconfig：显示网络设备情况
 
-14、显示网络相关信息：**netstat**
+14、**显示网络相关信息**：**netstat**
 
 netstat -a：列出所有端口
 
